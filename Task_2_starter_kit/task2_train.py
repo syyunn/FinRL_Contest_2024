@@ -1,3 +1,5 @@
+from huggingface_hub import login
+
 import os
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -32,8 +34,13 @@ STOCK_TICKERS_HIGHEST_CAP_US = [
 
 """load data and make dset - first we load in the ticker data for each ticker, then we enrich that with news data"""
 # stock_data = get_stock_data(STOCK_TICKERS_HIGHEST_CAP_US, START_DATE, END_DATE)
-dset_prefix = './Task_2_starter_kit/competition_dsets/'
+dset_prefix = '~/FinRL_Contest_2024/Task_2_starter_kit/'
 stock_data = pd.read_csv(os.path.join(dset_prefix, "task2_stocks.csv"))
+
+import dotenv 
+dotenv.load_dotenv(os.path.join(dset_prefix, ".env"))
+login(token=os.getenv("HF_TOKEN"))
+
 
 """load model and env"""
 from task2_env import Task2Env
