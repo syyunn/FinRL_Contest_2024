@@ -1,6 +1,7 @@
+import os
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from transformers import BitsAndBytesConfig
+from transformers import BitsAndBytesConfig 
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -14,8 +15,8 @@ from task2_signal import generate_signal
 
 max_train_steps = 50
 # Date ranges for the starter solution
-END_DATE = "2023-12-16"
 START_DATE = "2020-01-01"
+END_DATE = "2023-12-16"
 
 """a very simple env whost state space is only the data"""
 STOCK_TICKERS_HIGHEST_CAP_US = [
@@ -31,7 +32,8 @@ STOCK_TICKERS_HIGHEST_CAP_US = [
 
 """load data and make dset - first we load in the ticker data for each ticker, then we enrich that with news data"""
 # stock_data = get_stock_data(STOCK_TICKERS_HIGHEST_CAP_US, START_DATE, END_DATE)
-stock_data = pd.read_csv("task2_stocks.csv")
+dset_prefix = './Task_2_starter_kit/competition_dsets/'
+stock_data = pd.read_csv(os.path.join(dset_prefix, "task2_stocks.csv"))
 
 """load model and env"""
 from task2_env import Task2Env
@@ -52,8 +54,9 @@ max_memory = {i: "22GiB" for i in range(num_gpus)}
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # map to auto for multi gpu
 model_name = "meta-llama/Llama-3.2-3B-Instruct"
+# model_name = "gpt2"
 
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=True)
 model = AutoModelForCausalLM.from_pretrained(
     model_name,
     quantization_config=bnb_config_4,
@@ -80,7 +83,7 @@ lora_config = LoraConfig(
     bias="none",
 )
 
-model = get_peft_model(model, lora_config)
+model = get_peft_model(model, lora_config) # add LoRA to the model
 model.print_trainable_parameters()
 
 task2env = Task2Env(
@@ -91,10 +94,11 @@ task2env = Task2Env(
     (-2, 2),
     max_steps=252 - 4,
     lookahead=14,
-)
+) # they told me to freely cutomize the reward function of the environment to fine-tune the llm
 
 
 state = task2env.reset()
+print("state", state)
 actions = []
 rewards = []
 returns = []
@@ -103,7 +107,7 @@ losses = []
 
 optimizer = Adam(model.parameters(), lr=1e-5)
 
-# you can also set this to true or while not horizon len met
+# you can also set this to true or while not horizon len met, like using "done" in the environment
 for step in tqdm(range(max_train_steps), desc=f"training for max train steps: {max_train_steps}"):
     date, prices = state
     date = pd.Timestamp(date)
@@ -112,7 +116,9 @@ for step in tqdm(range(max_train_steps), desc=f"training for max train steps: {m
     rewards_list = []
     done = False
 
-    for t in prices.Ticker:
+    # for each step, generate a signal for each ticker
+    for t in prices.Ticker: # for each ticker, generate a signal
+        print(f"generating signal for {t}")
         news = get_news(
             t,
             (date - timedelta(days=1))._date_repr,
