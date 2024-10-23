@@ -52,6 +52,7 @@ def _generate_signal(tokenizer, model, device, news, prices):
     total_log_prob = torch.stack(log_probs).sum()
 
     output_string = tokenizer.decode(generated_ids[0], skip_special_tokens=True).strip()
+    print("output_string", output_string)
 
     match = re.search(r"Sentiment score:\s*(-?\d+(?:\.\d+)?)", output_string)
     sentiment_score = float(match.group(1)) if match else 0
