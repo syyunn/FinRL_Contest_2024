@@ -9,6 +9,22 @@ You can improve the sentiment analysis here or generate your own signal.
 import re
 import torch
 
+# SAMPLE_PROMPT = """Task: Analyze the following news headline about a stock and provide a sentiment score between -10 and 10, where:
+# - -10 means very negative sentiment
+# - -3 means neutral negative sentiment
+# - 0 means neutral sentiment
+# - 3 indicates neutral positive sentiment
+# - 10 means very positive sentiment
+
+# Do not provide any explanations. Output only a single number in the range of -10 to 10 based on the sentiment of the news. 
+
+# News headline: "{news}"
+
+# Price Data: "{prices}"
+
+# Generate only a single integer value for the sentiment score after the colon. Sentiment score:
+# """
+
 SAMPLE_PROMPT = """Task: Analyze the following news headline about a stock and provide a sentiment score between -10 and 10, where:
 - -10 means very negative sentiment
 - -3 means neutral negative sentiment
@@ -22,7 +38,10 @@ News headline: "{news}"
 
 Price Data: "{prices}"
 
-Generate only a single integer value for the sentiment score after the colon. Sentiment score:
+Generate only a integer value for the sentiment score after the colon. Sentiment score:
+
+and then generate the reason for the sentiment score.
+
 """
 
 
