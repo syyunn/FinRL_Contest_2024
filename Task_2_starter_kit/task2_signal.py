@@ -32,16 +32,14 @@ SAMPLE_PROMPT = """Task: Analyze the following news headline about a stock and p
 - 3 indicates neutral positive sentiment
 - 10 means very positive sentiment
 
-Do not provide any explanations. Output only a single number in the range of -10 to 10 based on the sentiment of the news. 
+Output a single number in the range of -10 to 10 based on the sentiment of the news. 
 
 News headline: "{news}"
 
 Price Data: "{prices}"
 
-Generate only a integer value for the sentiment score after the colon. Sentiment score:
-
-and then generate the reason for the sentiment score.
-
+1. Generate a integer value for the sentiment score after the colon. Sentiment score:
+2. Then generate the reason for the sentiment score.
 """
 
 
@@ -52,7 +50,7 @@ def _generate_signal(tokenizer, model, device, news, prices):
 
     generated_ids = inputs["input_ids"]
     log_probs = []
-    max_new_tokens = 5
+    max_new_tokens = 1000
 
     for _ in range(max_new_tokens):
         outputs = model(input_ids=generated_ids)
