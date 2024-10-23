@@ -3,3 +3,5 @@
 __pycache__
 *.env
 *.pyc
+
+Llama-3.2-3B-Instruct
