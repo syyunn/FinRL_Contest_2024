@@ -60,7 +60,8 @@ max_memory = {i: "22GiB" for i in range(num_gpus)}
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # map to auto for multi gpu
-model_name = "meta-llama/Llama-3.2-3B-Instruct"
+# model_name = "meta-llama/Llama-3.2-3B-Instruct"
+model_name = "/home/gridsan/syun/Llama-3.2-3B-Instruct"
 # model_name = "gpt2"
 
 tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=True)
