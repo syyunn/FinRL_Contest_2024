@@ -1,4 +1,4 @@
-from huggingface_hub import login
+# from huggingface_hub import login
 
 import os
 import torch
@@ -37,9 +37,9 @@ STOCK_TICKERS_HIGHEST_CAP_US = [
 dset_prefix = '~/FinRL_Contest_2024/Task_2_starter_kit/'
 stock_data = pd.read_csv(os.path.join(dset_prefix, "task2_stocks.csv"))
 
-import dotenv 
-dotenv.load_dotenv(os.path.join(dset_prefix, ".env"))
-login(token=os.getenv("HF_TOKEN"))
+# import dotenv 
+# dotenv.load_dotenv(os.path.join(dset_prefix, ".env"))
+# login(token=os.getenv("HF_TOKEN"))
 
 
 """load model and env"""
