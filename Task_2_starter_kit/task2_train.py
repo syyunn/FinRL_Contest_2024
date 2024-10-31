@@ -1,3 +1,4 @@
+import os
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import BitsAndBytesConfig
@@ -45,7 +46,8 @@ train_config = Task2Config(
 
 """load data and make dset - first we load in the ticker data for each ticker, then we enrich that with news data"""
 # stock_data = get_stock_data(STOCK_TICKERS_HIGHEST_CAP_US, START_DATE, END_DATE)
-stock_data = pd.read_csv("task2_stocks.csv")
+data_path = "Task_2_starter_kit/task2_train_dsets"
+stock_data = pd.read_csv(os.path.join(data_path, "task2_stocks.csv"))
 
 """load model and env"""
 from task2_env import Task2Env
@@ -132,7 +134,7 @@ for step in tqdm(
             t,
             (date - timedelta(days=1))._date_repr,
             (date - timedelta(days=11))._date_repr,
-            "task2_news.csv",
+            os.path.join(data_path, "task2_news.csv"),
         )
         sentiment_score, log_prob = generate_signal(
             tokenizer,
