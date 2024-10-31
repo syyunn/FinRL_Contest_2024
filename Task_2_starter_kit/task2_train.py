@@ -33,7 +33,8 @@ STOCK_TICKERS_HIGHEST_CAP_US = [
 ]
 
 train_config = Task2Config(
-    model_name="meta-llama/Llama-3.2-3B-Instruct",
+    # model_name="meta-llama/Llama-3.2-3B-Instruct",
+    model_name="/home/gridsan/syun/Llama-3.2-3B-Instruct"
     bnb_config=BitsAndBytesConfig(load_in_8bit=True),
     tickers=STOCK_TICKERS_HIGHEST_CAP_US,
     end_date=END_DATE,
