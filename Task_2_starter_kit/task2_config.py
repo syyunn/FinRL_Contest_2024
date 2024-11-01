@@ -15,7 +15,7 @@ class Task2Config:
         signal_strengh=10,
         num_short=3,
         num_long=3,
-        max_train_steps=50
+        max_train_steps=1
     ):
         self.model_name = model_name
         self.bnb_config = bnb_config

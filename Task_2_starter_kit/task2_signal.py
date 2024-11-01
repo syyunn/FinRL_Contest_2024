@@ -29,7 +29,7 @@ Generate only a single integer value for the sentiment score after the colon. Se
 def _generate_signal(tokenizer, model, device, news, prices, signal_strengh, threshold):
     """Using model forward pass to do backprop"""
     prompt = SAMPLE_PROMPT.format(signal_strengh=signal_strengh, threshold=threshold, news=news, prices=prices)
-    inputs = tokenizer(prompt, return_tensors="pt")  # .to(device)
+    inputs = tokenizer(prompt, return_tensors="pt").to(device)
 
     generated_ids = inputs["input_ids"]
     log_probs = []

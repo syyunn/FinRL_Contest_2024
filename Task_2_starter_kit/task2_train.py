@@ -34,7 +34,7 @@ STOCK_TICKERS_HIGHEST_CAP_US = [
 
 train_config = Task2Config(
     # model_name="meta-llama/Llama-3.2-3B-Instruct",
-    model_name="/home/gridsan/syun/Llama-3.2-3B-Instruct"
+    model_name="/home/gridsan/syun/Llama-3.2-3B-Instruct",
     bnb_config=BitsAndBytesConfig(load_in_8bit=True),
     tickers=STOCK_TICKERS_HIGHEST_CAP_US,
     end_date=END_DATE,
@@ -54,13 +54,13 @@ stock_data = pd.read_csv(os.path.join(data_path, "task2_stocks.csv"))
 from task2_env import Task2Env
 
 bnb_config_4 = BitsAndBytesConfig(
-    load_in_4bit=True,
+     load_in_4bit=True,
     bnb_4bit_compute_dtype=torch.bfloat16,  # or torch.bfloat16
     bnb_4bit_use_double_quant=False,
     bnb_4bit_quant_type="fp4",  # 'nf4' or 'fp4'
 )
 
-bnb_config_8 = BitsAndBytesConfig(load_in_8bit=True)
+# bnb_config_8 = BitsAndBytesConfig(load_in_8bit=True)
 
 
 num_gpus = torch.cuda.device_count()
