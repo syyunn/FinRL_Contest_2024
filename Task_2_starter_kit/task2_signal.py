@@ -40,7 +40,27 @@ def _generate_signal(tokenizer, model, device, news, prices, signal_strengh, thr
         logits = outputs.logits  # shape: [batch_size, seq_length, vocab_size]
 
         next_token_logits = logits[:, -1, :]
+
+        # Apply numerical stability fix by subtracting the max logits
+        next_token_logits = next_token_logits - torch.max(next_token_logits, dim=-1, keepdim=True)[0]
+
         next_token_probs = torch.softmax(next_token_logits, dim=-1)
+
+        # Replace NaNs and Infs with zeros
+        next_token_probs = torch.nan_to_num(next_token_probs, nan=0.0, posinf=0.0, neginf=0.0)
+
+        # Ensure the probabilities sum to 1
+        prob_sum = next_token_probs.sum(dim=-1, keepdim=True)
+        # Avoid division by zero
+        epsilon = 1e-8
+        prob_sum = prob_sum + epsilon
+        next_token_probs = next_token_probs / prob_sum
+
+        # In case the sum is still zero (all probabilities are zero), replace with uniform distribution
+        zero_sum_mask = (prob_sum.squeeze() == epsilon)
+        if zero_sum_mask.any():
+            vocab_size = next_token_probs.size(-1)
+            next_token_probs[zero_sum_mask] = 1.0 / vocab_size
 
         next_token_id = torch.multinomial(next_token_probs, num_samples=1)
 
