@@ -1,0 +1,13 @@
+transformers
+matplotlib
+pandas
+peft
+yfinance
+gymnasium
+stable_baselines3
+finrl
+alpaca_trade_api 
+exchange_calendars
+stockstats
+wrds
+bitsandbytes
