@@ -94,7 +94,7 @@ for date in tqdm(eval_config.eval_dates, desc="Evaluating..."):
         )
 
         if not news:
-            print(f"No news found for {ticker} on {date._date_repr}")
+            print(f"No news found for {ticker} on the range {(date - timedelta(days=1))._date_repr} to {(date - timedelta(days=11))._date_repr}")
             continue
 
         signal_score = generate_eval_signal(
@@ -125,28 +125,28 @@ for date in tqdm(eval_config.eval_dates, desc="Evaluating..."):
 
         logging_cum_returns_df_threshold_based.append({"Date": date, "Ticker": ticker, "ValueChange": value_change})
 
-    ### EVAL STRATEGY ###
-    sorted_tickers = sorted(ticker_signals.items(), key=lambda x: x[1], reverse=True)
-    sorted_thresh_tickers_long = [ticker for ticker in sorted_tickers if ticker[1] > eval_config.threshold]
-    sorted_thresh_tickers_short = [ticker for ticker in sorted_tickers if ticker[1] < -eval_config.threshold]
-    long_tickers = sorted_thresh_tickers_long[: eval_config.num_long]  # Highest signal scores
-    short_tickers = sorted_thresh_tickers_short[eval_config.num_short :]  # Lowest signal scores
+    # ### EVAL STRATEGY ###
+    # sorted_tickers = sorted(ticker_signals.items(), key=lambda x: x[1], reverse=True)
+    # sorted_thresh_tickers_long = [ticker for ticker in sorted_tickers if ticker[1] > eval_config.threshold]
+    # sorted_thresh_tickers_short = [ticker for ticker in sorted_tickers if ticker[1] < -eval_config.threshold]
+    # long_tickers = sorted_thresh_tickers_long[: eval_config.num_long]  # Highest signal scores
+    # short_tickers = sorted_thresh_tickers_short[eval_config.num_short :]  # Lowest signal scores
 
-    eval_rets = []
-    for ticker, signal_score in long_tickers + short_tickers:
-        close_price = prices.loc[prices["Ticker"] == ticker, "Close"].item()
-        future_price = prices.loc[prices["Ticker"] == ticker, "future_close"].item()
+    # eval_rets = []
+    # for ticker, signal_score in long_tickers + short_tickers:
+    #     close_price = prices.loc[prices["Ticker"] == ticker, "Close"].item()
+    #     future_price = prices.loc[prices["Ticker"] == ticker, "future_close"].item()
 
-        # Calculate value change based on long or short position
-        if ticker in dict(long_tickers):
-            value_change = (future_price - close_price) / close_price  # Long trade
-        else:
-            value_change = -1 * ((future_price - close_price) / close_price)  # Short trade
+    #     # Calculate value change based on long or short position
+    #     if ticker in dict(long_tickers):
+    #         value_change = (future_price - close_price) / close_price  # Long trade
+    #     else:
+    #         value_change = -1 * ((future_price - close_price) / close_price)  # Short trade
 
-        eval_rets.append(value_change)
+    #     eval_rets.append(value_change)
 
-    # Track the trade result
-    eval_cum_returns_data.append({"Date": date, "MeanEvalReturn": np.mean(eval_rets), "win_loss": value_change >= 0})
+    # # Track the trade result
+    # eval_cum_returns_data.append({"Date": date, "MeanEvalReturn": np.mean(eval_rets), "win_loss": value_change >= 0})
 
 
 ### LOGGING - FOR YOUR INFORMATION, YOU MAY CHANGE THIS SECTION TO ADD ADDITIONAL LOGGING ###
