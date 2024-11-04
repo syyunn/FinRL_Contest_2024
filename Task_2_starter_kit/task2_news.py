@@ -6,6 +6,9 @@ import pandas as pd
 
 
 def _get_news(ticker: str, start_date: str, end_date: str, dset: str):
+    print("start date", start_date)
+    print("end date", end_date)
+    print("ticker", ticker)
 
     # Read in csv file
     df = pd.read_csv(dset)
