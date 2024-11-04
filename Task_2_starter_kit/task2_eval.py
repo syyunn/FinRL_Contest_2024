@@ -80,6 +80,7 @@ logging_cum_returns_df_threshold_based = []
 eval_cum_returns_data = []
 
 for date in tqdm(eval_config.eval_dates, desc="Evaluating..."):
+    print(date._date_repr)
     prices = stock_data[stock_data["Date"] == date._date_repr]
 
     if prices.empty:
@@ -93,9 +94,9 @@ for date in tqdm(eval_config.eval_dates, desc="Evaluating..."):
         news = get_news(
             ticker,
             (
-                date - timedelta(days=1)
+                date - timedelta(days=11)
             )._date_repr,  # get news from the previous day to prevent post market close data leakage
-            (date - timedelta(days=11))._date_repr,
+            (date - timedelta(days=1))._date_repr,
             "task2_news.csv",  # you can change this to the eval news set that you create to test your model
         )
         print(news)
