@@ -59,7 +59,7 @@ bnb_config_4 = BitsAndBytesConfig(
     bnb_4bit_quant_type="fp4",  # 'nf4' or 'fp4'
 )
 
-# bnb_config_8 = BitsAndBytesConfig(load_in_8bit=True)
+bnb_config_8 = BitsAndBytesConfig(load_in_8bit=True)
 
 
 num_gpus = torch.cuda.device_count()
