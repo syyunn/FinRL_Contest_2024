@@ -11,3 +11,4 @@ exchange_calendars
 stockstats
 wrds
 bitsandbytes
+huggingface_hub
