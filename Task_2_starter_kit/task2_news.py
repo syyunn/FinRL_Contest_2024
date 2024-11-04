@@ -15,7 +15,7 @@ def _get_news(ticker: str, start_date: str, end_date: str, dset: str):
     df = df[
         (df["Date"] >= start_date) & (df["Date"] <= end_date)
     ]  # in default imp this is a five day range
-
+    print(df)
     news_content = ""
     for _, row in df.iterrows():
         title = row["Article_title"] if pd.notna(row["Article_title"]) else ""
@@ -23,7 +23,7 @@ def _get_news(ticker: str, start_date: str, end_date: str, dset: str):
             row["Textrank_summary"] if pd.notna(row["Textrank_summary"]) else ""
         )
         news_content += f"{title}, {textrank_summary} -- "
-
+    print(news_content)
     return news_content
 
 

@@ -16,8 +16,8 @@ from task2_config import Task2Config
 # END_DATE = None
 # START_DATE = None
 END_DATE = "2023-12-16"
-# START_DATE = "2020-01-01"
-START_DATE = "2023-11-01"
+START_DATE = "2020-01-01"
+# START_DATE = "2023-11-01"
 
 
 """a very simple env whost state space is only the data"""
