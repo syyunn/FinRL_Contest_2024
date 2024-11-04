@@ -54,7 +54,7 @@ from task2_env import Task2Env
 
 bnb_config_4 = BitsAndBytesConfig(
     load_in_4bit=True,
-    bnb_4bit_compute_dtype=torch.bfloat16,  # or torch.bfloat16
+    bnb_4bit_compute_dtype=torch.float16,  # Changed from torch.bfloat16
     bnb_4bit_use_double_quant=False,
     bnb_4bit_quant_type="fp4",  # 'nf4' or 'fp4'
 )
