@@ -42,6 +42,9 @@ def _generate_signal(tokenizer, model, device, news, prices, signal_strengh, thr
     print(inputs['input_ids'].shape)
     generated_ids = inputs["input_ids"].to(device)
 
+    max_input_token_lengths = 512
+    generated_ids = generated_ids[:, -max_input_token_lengths:]
+
     log_probs = []
     max_new_tokens = 5
 
