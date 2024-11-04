@@ -41,7 +41,8 @@ train_config = Task2Config(
     start_date=START_DATE,
     lookahead=3,
     signal_strengh=10,
-    max_train_steps=50,
+    # max_train_steps=50,
+    max_train_steps=1
 )
 
 
