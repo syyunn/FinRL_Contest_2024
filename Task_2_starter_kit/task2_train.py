@@ -53,7 +53,7 @@ stock_data = pd.read_csv(os.path.join(data_path, "task2_stocks.csv"))
 from task2_env import Task2Env
 
 bnb_config_4 = BitsAndBytesConfig(
-     load_in_4bit=True,
+    load_in_4bit=True,
     bnb_4bit_compute_dtype=torch.bfloat16,  # or torch.bfloat16
     bnb_4bit_use_double_quant=False,
     bnb_4bit_quant_type="fp4",  # 'nf4' or 'fp4'
@@ -88,7 +88,7 @@ model.config.use_cache = False
 lora_config = LoraConfig(
     task_type=TaskType.CAUSAL_LM,
     inference_mode=False,
-    r=8,
+    r=4,
     target_modules=["q_proj", "v_proj"],
     lora_alpha=16,
     lora_dropout=0.1,
