@@ -15,7 +15,8 @@ def _get_news(ticker: str, start_date: str, end_date: str, dset: str):
     df = df[
         (df["Date"] >= start_date) & (df["Date"] <= end_date)
     ]  # in default imp this is a five day range
-    print(df)
+    print("df in that date range", df)
+    print("length of df in that date range", len(df))
     news_content = ""
     for _, row in df.iterrows():
         title = row["Article_title"] if pd.notna(row["Article_title"]) else ""
