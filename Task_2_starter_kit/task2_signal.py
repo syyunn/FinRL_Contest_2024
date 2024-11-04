@@ -36,7 +36,10 @@ def _generate_signal(tokenizer, model, device, news, prices, signal_strengh, thr
         news=news,
         prices=prices
     )
+    print(prompt)
     inputs = tokenizer(prompt, return_tensors="pt").to(device)
+    print(inputs)
+    print(inputs['input_ids'].shape)
     generated_ids = inputs["input_ids"].to(device)
 
     log_probs = []
