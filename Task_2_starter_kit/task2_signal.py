@@ -91,7 +91,7 @@ def _generate_eval_signal(tokenizer, model, device, news, prices, signal_strengh
     print(prompt)
 
     # using news signals, prompt model for a scaled sentiment scorea
-    input = tokenizer(prompt, returtn_tensors="pt").to(device)
+    input = tokenizer(prompt, return_tensors="pt").to(device)
     print(input)
     print(len(input))
     outputs = model.generate(**input, max_new_tokens=5, pad_token_id=tokenizer.eos_token_id)
