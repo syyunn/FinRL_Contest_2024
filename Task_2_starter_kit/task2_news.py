@@ -20,6 +20,8 @@ def _get_news(ticker: str, start_date: str, end_date: str, dset: str):
     print("ticker", ticker)
     print("df in that date range", df)
     print("length of df in that date range", len(df))
+    if len(df) == 0:
+        return False
 
     news_content = ""
     for _, row in df.iterrows():

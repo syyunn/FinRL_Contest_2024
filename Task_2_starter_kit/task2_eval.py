@@ -89,6 +89,10 @@ for date in tqdm(eval_config.eval_dates, desc="Evaluating..."):
             "task2_news.csv",  # you can change this to the eval news set that you create to test your model
         )
 
+        if not news:
+            print(f"No news found for {ticker} on {date._date_repr}")
+            continue
+
         signal_score = generate_eval_signal(
             tokenizer,
             model,
