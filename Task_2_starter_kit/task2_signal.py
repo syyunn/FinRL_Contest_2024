@@ -93,7 +93,7 @@ def _generate_eval_signal(tokenizer, model, device, news, prices, signal_strengh
     # using news signals, prompt model for a scaled sentiment scorea
     input = tokenizer(prompt, return_tensors="pt").to(device)
     print(input)
-    print(len(input))
+    print(input['input_ids'].shape)
     outputs = model.generate(**input, max_new_tokens=5, pad_token_id=tokenizer.eos_token_id)
     output_string = tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
     match = re.search(r"Sentiment score:\s*(-?\d+(?:\.\d+)?)", output_string)

@@ -95,6 +95,7 @@ for date in tqdm(eval_config.eval_dates, desc="Evaluating..."):
             (date - timedelta(days=11))._date_repr,
             "task2_news.csv",  # you can change this to the eval news set that you create to test your model
         )
+        print(news)
 
         signal_score = generate_eval_signal(
             tokenizer,
