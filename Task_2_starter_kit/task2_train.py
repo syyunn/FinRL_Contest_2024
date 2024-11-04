@@ -134,8 +134,8 @@ for step in tqdm(
     for t in prices.Ticker:
         news = get_news(
             t,
-            (date - timedelta(days=1))._date_repr,
             (date - timedelta(days=11))._date_repr,
+            (date - timedelta(days=1))._date_repr,
             os.path.join(data_path, "task2_news.csv"),
         )
         print(news)
