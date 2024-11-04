@@ -94,7 +94,7 @@ for date in tqdm(eval_config.eval_dates, desc="Evaluating..."):
         news = get_news(
             ticker,
             (
-                date - timedelta(days=1)
+                date - timedelta(days=2)
             )._date_repr,  # get news from the previous day to prevent post market close data leakage
             (date - timedelta(days=1))._date_repr,
             "task2_news.csv",  # you can change this to the eval news set that you create to test your model
