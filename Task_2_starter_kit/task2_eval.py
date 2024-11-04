@@ -61,6 +61,7 @@ daily_returns = []
 # data
 # stock_data = pd.read_csv("task2_eval_stocks.csv")
 stock_data = pd.read_csv("task2_stocks.csv")
+stock_data['future_close'] = stock_data.groupby('Ticker')['Close'].shift(-eval_config.lookahead)
 
 # this is simply for logging to see how your model is performing. We will not be evaluating on threshold trading returns
 logging_cum_returns_df_threshold_based = []
