@@ -28,7 +28,8 @@ STOCK_TICKERS_HIGHEST_CAP_US = [
 ]
 
 eval_config = Task2Config(
-    model_name="meta-llama/Llama-3.2-3B-Instruct",
+    # model_name="meta-llama/Llama-3.2-3B-Instruct",
+    model_name="meta-llama/Llama-3.2-1B-Instruct",
     bnb_config=BitsAndBytesConfig(load_in_8bit=True),
     tickers=STOCK_TICKERS_HIGHEST_CAP_US,
     end_date=END_DATE,
@@ -58,8 +59,8 @@ trade_win_loss = []  # 1 for win 0 for loss
 daily_returns = []
 
 # data
-
-stock_data = pd.read_csv("task2_eval_stocks.csv")
+# stock_data = pd.read_csv("task2_eval_stocks.csv")
+stock_data = pd.read_csv("task2_stocks.csv")
 
 # this is simply for logging to see how your model is performing. We will not be evaluating on threshold trading returns
 logging_cum_returns_df_threshold_based = []

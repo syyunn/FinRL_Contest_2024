@@ -15,6 +15,11 @@ def _get_news(ticker: str, start_date: str, end_date: str, dset: str):
     df = df[
         (df["Date"] >= start_date) & (df["Date"] <= end_date)
     ]  # in default imp this is a five day range
+    print("start date", start_date)
+    print("end date", end_date)
+    print("ticker", ticker)
+    print("df in that date range", df)
+    print("length of df in that date range", len(df))
 
     news_content = ""
     for _, row in df.iterrows():
