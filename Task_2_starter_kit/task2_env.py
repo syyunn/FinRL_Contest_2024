@@ -85,8 +85,8 @@ class Task2Env(gym.Env):
         self.moderate_negative_reward = -0.1  # Small negative reward for minor wrong actions
 
         # eval
-        self.eval_amt = 1e6
-
+        self.eval_amt = 1e6 # this is initial amount of money to evaluate the model
+ 
     """State: 
         - List of daily sorted news headlines about stocks
         - Market state"""
@@ -148,64 +148,57 @@ class Task2Env(gym.Env):
 
     def _calculate_reward(self, actions):
         """
-        Uses a fixed lookahead to calculate reward based on the stock price movement. 
-        We demonstrate a simple mechanism that takes model confidence into account.
-        You can design your own reward function.
+        Calculates reward based on the evaluation strategy with thresholds:
+        - Buy top 3 stocks with highest signals exceeding the positive threshold.
+        - Short-sell bottom 3 stocks with lowest signals below the negative threshold.
         """
-        # use action vector for each stock to determine long, short or pass
         prices = self.state[1]
-        p_returns = []
-        rewards = [] # list of rewards for each ticker
+        tickers = prices.Ticker.unique()
 
-        for ticker in prices.Ticker:
-            sentiment_score = actions[ticker]
+        # Extract sentiment scores for each ticker
+        sentiment_scores = {ticker: actions[ticker] for ticker in tickers}
+
+        # Sort tickers by sentiment score
+        sorted_tickers = sorted(sentiment_scores.items(), key=lambda x: x[1], reverse=True)
+
+        # Apply thresholds
+        positive_threshold = self.threshold   # Positive threshold (e.g., 3)
+        negative_threshold = -self.threshold  # Negative threshold (e.g., -3)
+
+        # Get top tickers exceeding positive threshold
+        top_tick_shares = [item for item in sorted_tickers if item[1] >= positive_threshold]
+        top_3_long = top_tick_shares[:3]  # Take up to 3 stocks
+
+        # Get bottom tickers below negative threshold
+        bottom_tick_shares = [item for item in reversed(sorted_tickers) if item[1] <= negative_threshold]
+        bottom_3_short = bottom_tick_shares[:3]  # Take up to 3 stocks
+
+        returns = []
+
+        # Calculate returns for long positions
+        for ticker, score in top_3_long:
             c_price = prices.loc[prices["Ticker"] == ticker, "Close"].values[0]
             f_price = prices.loc[prices["Ticker"] == ticker, "future_close"].values[0]
+            value_change = (f_price - c_price) / c_price  # Long position return
+            returns.append(value_change)
 
-            value_change = (f_price - c_price) / c_price
+        # Calculate returns for short positions
+        for ticker, score in bottom_3_short:
+            c_price = prices.loc[prices["Ticker"] == ticker, "Close"].values[0]
+            f_price = prices.loc[prices["Ticker"] == ticker, "future_close"].values[0]
+            value_change = (c_price - f_price) / c_price  # Short position return
+            returns.append(value_change)
 
-            if sentiment_score >= self.threshold:
-                # long, sell at c price
-                if value_change > self.strong_positive_return:
-                    reward = (
-                        self.great_positive_reward if sentiment_score > self.high_confidence else self.positive_reward
-                    )
-                elif value_change < 0:  # Negative return despite positive sentiment
-                    reward = (
-                        self.highest_negative_reward
-                        if sentiment_score > self.high_confidence
-                        else self.negative_reward
-                    )
-                else:
-                    reward = (
-                        self.weak_positive_reward if sentiment_score > self.high_confidence else self.moderate_reward
-                    )
+        # Calculate average return
+        avg_return = np.mean(returns) if returns else 0
 
-            elif sentiment_score <= -1 * self.threshold:
-                # short, sell at c price and buy back at f price
-                if value_change < -self.strong_negative_return:
-                    reward = (
-                        self.highest_negative_reward
-                        if sentiment_score > self.high_confidence
-                        else self.negative_reward
-                    )
-                elif value_change > 0:  # Positive return despite negative sentiment
-                    reward = (
-                        self.great_positive_reward if sentiment_score > self.high_confidence else self.positive_reward
-                    )
-                else:
-                    reward = (
-                        self.weak_negative_reward
-                        if sentiment_score > self.high_confidence
-                        else self.moderate_negative_reward
-                    )
-            else:
-                reward = self.passive_reward  # no strong action taken
+        # Use the average return as the reward
+        sum_reward = avg_return
 
-            rewards.append(reward)
-            p_returns.append(value_change)
+        # Update the evaluation amount for tracking cumulative returns
+        self.eval_amt = self.eval_amt * (1 + avg_return)
 
-        return (np.sum(rewards), np.mean(p_returns))
+        return sum_reward, avg_return
 
     def _evaluate_model(self, actions):
         """
@@ -215,7 +208,7 @@ class Task2Env(gym.Env):
         In the contest evaluation phase, we will use a similar trading strategy to evalute signals.
         """
         # use action vector for each stock to determine long, short or pass
-        returns = []
+        returns = [] # this list include the return for each ticker
         prices = self.state[1]
         for ticker in self.state[1].Ticker:
             sentiment_score = actions[ticker]

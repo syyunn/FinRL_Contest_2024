@@ -97,13 +97,14 @@ model = get_peft_model(model, lora_config)
 model.print_trainable_parameters()
 
 task2env = Task2Env(
-    model,
-    tokenizer,
-    STOCK_TICKERS_HIGHEST_CAP_US,
-    stock_data,
-    (-2, 2),
+    model=model,
+    tokenizer=tokenizer,
+    tickers=STOCK_TICKERS_HIGHEST_CAP_US,
+    stock_data=stock_data,
+    scale_range=(-10, 10),
     max_steps=252 - 4,
-    lookahead=14,
+    threshold=3,
+    lookahead=3,
 )
 
 
