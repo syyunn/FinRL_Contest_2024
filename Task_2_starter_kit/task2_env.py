@@ -155,7 +155,7 @@ class Task2Env(gym.Env):
         # use action vector for each stock to determine long, short or pass
         prices = self.state[1]
         p_returns = []
-        rewards = []
+        rewards = [] # list of rewards for each ticker
 
         for ticker in prices.Ticker:
             sentiment_score = actions[ticker]

@@ -13,8 +13,11 @@ from task2_config import Task2Config
 
 
 # Date ranges for the starter solution. You may withold some of the training data and use it as validation data
-END_DATE = None
-START_DATE = None
+# END_DATE = None
+# START_DATE = None
+END_DATE = "2023-12-16"
+# START_DATE = "2020-01-01"
+START_DATE = "2024-12-10"
 
 """a very simple env whost state space is only the data"""
 STOCK_TICKERS_HIGHEST_CAP_US = [
@@ -28,7 +31,7 @@ STOCK_TICKERS_HIGHEST_CAP_US = [
 ]
 
 eval_config = Task2Config(
-    model_name="meta-llama/Llama-3.2-3B-Instruct",
+    model_name="meta-llama/Llama-3.2-1B-Instruct",
     bnb_config=BitsAndBytesConfig(load_in_8bit=True),
     tickers=STOCK_TICKERS_HIGHEST_CAP_US,
     end_date=END_DATE,
@@ -81,9 +84,9 @@ for date in tqdm(eval_config.eval_dates, desc="Evaluating..."):
         news = get_news(
             ticker,
             (
-                date - timedelta(days=1)
+                date - timedelta(days=11)
             )._date_repr,  # get news from the previous day to prevent post market close data leakage
-            (date - timedelta(days=11))._date_repr,
+            (date - timedelta(days=1))._date_repr,
             "task2_news.csv",  # you can change this to the eval news set that you create to test your model
         )
 
