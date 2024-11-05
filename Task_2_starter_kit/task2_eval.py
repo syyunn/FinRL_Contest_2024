@@ -17,7 +17,7 @@ from task2_config import Task2Config
 # START_DATE = None
 END_DATE = "2023-12-16"
 # START_DATE = "2020-01-01"
-START_DATE = "2024-12-10"
+START_DATE = "2023-12-10"
 
 NEWS_DATA = "task2_news.csv"
 STOCK_DATA = "task2_stocks.csv"
