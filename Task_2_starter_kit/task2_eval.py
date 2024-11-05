@@ -19,6 +19,9 @@ END_DATE = "2023-12-16"
 # START_DATE = "2020-01-01"
 START_DATE = "2024-12-10"
 
+NEWS_DATA = "task2_news.csv"
+STOCK_DATA = "task2_stocks.csv"
+
 """a very simple env whost state space is only the data"""
 STOCK_TICKERS_HIGHEST_CAP_US = [
     "AAPL",
@@ -62,7 +65,8 @@ daily_returns = []
 
 # data
 
-stock_data = pd.read_csv("task2_eval_stocks.csv")
+# stock_data = pd.read_csv("task2_eval_stocks.csv")
+stock_data = pd.read_csv(STOCK_DATA)
 
 # this is simply for logging to see how your model is performing. We will not be evaluating on threshold trading returns
 logging_cum_returns_df_threshold_based = []
