@@ -95,6 +95,11 @@ for date in tqdm(eval_config.eval_dates, desc="Evaluating..."):
             "task2_news.csv",  # you can change this to the eval news set that you create to test your model
         )
 
+        max_news_tokens = 300
+        print(len(news))
+        news = news[:max_news_tokens]
+        print(len(news))
+
         signal_score = generate_eval_signal(
             tokenizer,
             model,
