@@ -153,6 +153,7 @@ for step in tqdm(
 
     """actions may look like: {'AAPL': 1.0, 'NVDA': 1.5, 'GOOG': 0, 'AMZN': 1.5, 'MSFT': -1.5, 'XOM': 0.5, 'WMT': 1.5}"""
     state, reward, done, d = task2env.step(ticker_actions)
+    print("reward", reward)
     actions.append(ticker_actions)
     rewards.append(reward)
     returns.append(d["price change"])
