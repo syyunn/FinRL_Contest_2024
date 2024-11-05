@@ -7,6 +7,7 @@ import pandas as pd
 from tqdm import tqdm
 from torch.optim import Adam
 from peft import get_peft_model, LoraConfig, TaskType
+import torch.nn as nn
 
 from task2_stocks import get_stock_data
 from task2_news import get_news
@@ -14,6 +15,8 @@ from task2_signal import generate_signal
 from task2_config import Task2Config
 
 from task2_config import Task2Config
+
+from task2_critic import Critic
 
 
 # Date ranges for the starter solution
@@ -114,8 +117,27 @@ rewards = []
 returns = []
 running_eval = []
 losses = []
+critic_losses = []
+gamma = 0.99  # Discount factor for future rewards
 
 optimizer = Adam(model.parameters(), lr=1e-5)
+
+###################################### Critic Block ######################################
+# Load tokenizer and base model
+tokenizer = AutoTokenizer.from_pretrained(train_config.model_name)
+base_model = AutoModelForCausalLM.from_pretrained(
+    train_config.model_name,
+    quantization_config=bnb_config_4,
+    device_map="auto",
+)
+
+# Initialize the critic model
+critic = Critic(base_model, tokenizer).to(device)
+critic.train()
+
+# Define optimizer for the critic's parameters
+critic_optimizer = Adam(critic.parameters(), lr=1e-5)
+###################################### Critic Block ######################################
 
 # you can also set this to true or while not horizon len met
 for step in tqdm(
@@ -128,6 +150,7 @@ for step in tqdm(
     rewards_list = []
     done = False
 
+    # Actor Block
     for t in prices.Ticker:
         news = get_news(
             t,
@@ -150,6 +173,22 @@ for step in tqdm(
         )
         ticker_actions[t] = sentiment_score
         log_probs.append(log_prob)
+    
+    # Critic Block
+    ## Create a prompt that explicitly asks for the value estimation
+    prompt_critic = (
+        "Given the following news articles, stock prices, and current state, estimate the expected future reward:\n\n"
+        f"Stock Prices:\n{prices}\n\n"
+        f"Current State:\n{state}\n\n"
+        "What is the estimated value?"
+    )
+
+    input_ids_critic = tokenizer.encode(prompt_critic, return_tensors="pt").to(device)
+    attention_mask_critic = torch.ones_like(input_ids_critic).to(device) 
+    value_estimate = critic(input_ids_critic, attention_mask_critic)
+    print("value_estimate@step", step, value_estimate)
+
+    ### Advance to next state
 
     """actions may look like: {'AAPL': 1.0, 'NVDA': 1.5, 'GOOG': 0, 'AMZN': 1.5, 'MSFT': -1.5, 'XOM': 0.5, 'WMT': 1.5}"""
     state, reward, done, d = task2env.step(ticker_actions)
@@ -210,3 +249,4 @@ plt.legend()
 
 plt.tight_layout()
 plt.savefig("training.png")
+
