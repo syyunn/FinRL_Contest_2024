@@ -32,7 +32,7 @@ STOCK_TICKERS_HIGHEST_CAP_US = [
 ]
 
 train_config = Task2Config(
-    model_name="meta-llama/Llama-3.2-3B-Instruct",
+    model_name="meta-llama/Llama-3.2-1B-Instruct",
     bnb_config=BitsAndBytesConfig(load_in_8bit=True),
     tickers=STOCK_TICKERS_HIGHEST_CAP_US,
     end_date=END_DATE,
@@ -130,10 +130,14 @@ for step in tqdm(
     for t in prices.Ticker:
         news = get_news(
             t,
-            (date - timedelta(days=1))._date_repr,
             (date - timedelta(days=11))._date_repr,
+            (date - timedelta(days=1))._date_repr,
             "task2_news.csv",
         )
+        max_news_tokens = 300
+        print(len(news))
+        news = news[:max_news_tokens]
+        print(len(news))
         sentiment_score, log_prob = generate_signal(
             tokenizer,
             model,

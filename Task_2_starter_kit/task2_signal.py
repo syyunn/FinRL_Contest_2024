@@ -30,17 +30,27 @@ def _generate_signal(tokenizer, model, device, news, prices, signal_strengh, thr
     """Using model forward pass to do backprop"""
     prompt = SAMPLE_PROMPT.format(signal_strengh=signal_strengh, threshold=threshold, news=news, prices=prices)
     inputs = tokenizer(prompt, return_tensors="pt")  # .to(device)
+    
+    #print("before slice", inputs["input_ids"].shape)
+    #max_input_token_length =300
+    #generated_ids = inputs["input_ids"][:, :max_input_token_length]
 
+    #generated_ids = inputs["input_ids"][:max_input_token_length]
+    #print("after-slice: input-token-length", generated_ids.shape)
     generated_ids = inputs["input_ids"]
     log_probs = []
     max_new_tokens = 5
+    #print("gen-ids", generated_ids)
+    print("input-token-length", len(generated_ids))
+    #max_input_tokens = 7000
+    #generated_ids = generated_ids[: max_input_tokens]
 
     for _ in range(max_new_tokens):
         outputs = model(input_ids=generated_ids)
         logits = outputs.logits  # shape: [batch_size, seq_length, vocab_size]
 
         next_token_logits = logits[:, -1, :]
-        next_token_probs = torch.softmax(next_token_logits, dim=-1)
+        next_token_probs = torch.softmax(next_token_logits.float(), dim=-1)
 
         next_token_id = torch.multinomial(next_token_probs, num_samples=1)
 

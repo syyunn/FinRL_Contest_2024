@@ -6,6 +6,8 @@ import pandas as pd
 
 
 def _get_news(ticker: str, start_date: str, end_date: str, dset: str):
+    print("starte date", start_date)
+    print("end date", end_date)
 
     # Read in csv file
     df = pd.read_csv(dset)
@@ -15,7 +17,7 @@ def _get_news(ticker: str, start_date: str, end_date: str, dset: str):
     df = df[
         (df["Date"] >= start_date) & (df["Date"] <= end_date)
     ]  # in default imp this is a five day range
-
+    print("num news in date rage", len(df))
     news_content = ""
     for _, row in df.iterrows():
         title = row["Article_title"] if pd.notna(row["Article_title"]) else ""
