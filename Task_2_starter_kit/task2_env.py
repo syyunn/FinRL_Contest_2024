@@ -202,33 +202,48 @@ class Task2Env(gym.Env):
 
     def _evaluate_model(self, actions):
         """
-        A simple strategy to evaluate the LLM-generated sentiment score. 
-        Uses a fixed lookahead to calculate return based off of a trading action.
-        Feel free to design your own trading strategy here to evaluate your signal.
-        In the contest evaluation phase, we will use a similar trading strategy to evalute signals.
+        Evaluates the model based on the evaluation strategy with thresholds.
         """
-        # use action vector for each stock to determine long, short or pass
-        returns = [] # this list include the return for each ticker
         prices = self.state[1]
-        for ticker in self.state[1].Ticker:
-            sentiment_score = actions[ticker]
+        tickers = prices.Ticker.unique()
 
+        # Extract sentiment scores for each ticker
+        sentiment_scores = {ticker: actions[ticker] for ticker in tickers}
+
+        # Sort tickers by sentiment score
+        sorted_tickers = sorted(sentiment_scores.items(), key=lambda x: x[1], reverse=True)
+
+        # Apply thresholds
+        positive_threshold = self.threshold
+        negative_threshold = -self.threshold
+
+        # Get top tickers exceeding positive threshold
+        top_tick_shares = [item for item in sorted_tickers if item[1] >= positive_threshold]
+        top_3_long = top_tick_shares[:3]
+
+        # Get bottom tickers below negative threshold
+        bottom_tick_shares = [item for item in reversed(sorted_tickers) if item[1] <= negative_threshold]
+        bottom_3_short = bottom_tick_shares[:3]
+
+        returns = []
+
+        # Calculate returns for long positions
+        for ticker, score in top_3_long:
             c_price = prices.loc[prices["Ticker"] == ticker, "Close"].values[0]
             f_price = prices.loc[prices["Ticker"] == ticker, "future_close"].values[0]
-
-            if sentiment_score >= self.threshold:
-                # long, sell at c price
-                value_change = (f_price - c_price) / c_price
-            elif sentiment_score <= -1 * self.threshold:
-                # short, sell at c price and buy back at f price
-                value_change = (f_price - c_price) / c_price
-
-            else:
-                value_change = 0
-
+            value_change = (f_price - c_price) / c_price
             returns.append(value_change)
 
-        avg_return = np.mean(returns)
+        # Calculate returns for short positions
+        for ticker, score in bottom_3_short:
+            c_price = prices.loc[prices["Ticker"] == ticker, "Close"].values[0]
+            f_price = prices.loc[prices["Ticker"] == ticker, "future_close"].values[0]
+            value_change = (c_price - f_price) / c_price
+            returns.append(value_change)
+
+        # Compute average return
+        avg_return = np.mean(returns) if returns else 0
+
+        # Update the evaluation amount
         self.eval_amt = self.eval_amt * (1 + avg_return)
         return self.eval_amt
-        # if abs signal is greater than the threshold, then we take up a position and compare the absolute percentage change to future price which is the reward
